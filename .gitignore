@@ -1,0 +1,10 @@
+# Admin paneldə serverdə yaranan məlumatlar (istifadəçilər, müraciətlər, yüklənmiş şəkillər)
+# git-ə düşmür və deploy zamanı toxunulmur.
+/storage/data/
+/assets/uploads/*
+!/assets/uploads/.htaccess
+
+/.claude/
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /send.php
+
+Sitemap: https://jetpark.az/sitemap.xml

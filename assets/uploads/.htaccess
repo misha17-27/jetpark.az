@@ -1,0 +1,5 @@
+# Yüklənmiş fayllar yalnız şəkil kimi verilir, skriptlər icra olunmur.
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar
+<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh|html?|svg)$">
+    Require all denied
+</FilesMatch>
