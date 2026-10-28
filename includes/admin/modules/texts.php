@@ -77,7 +77,7 @@ admin_page(t('nav.texts'), 'texts', function () {
             <div class="form-grid">
                 <?= field_text('form_label', t('common.label'), content('form.label'), ['maxlength' => 60]) ?>
                 <?= field_text('form_button', t('common.button'), content('form.button'), ['maxlength' => 40]) ?>
-                <div class="span-2"><?= field_textarea('form_success', t('texts.form_success'), content('form.success'), ['rows' => 2, 'maxlength' => 300]) ?></div>
+                <div class="span-2"><?= field_textarea('form_success', t('texts.form_success'), content('form.success'), ['rows' => 2, 'maxlength' => 300, 'hint' => t('texts.form_success_hint')]) ?></div>
             </div>
         </div>
 

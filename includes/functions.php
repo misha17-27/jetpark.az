@@ -52,6 +52,19 @@ function phone_link(string $phone): string
     return preg_replace('/[^\d+]/', '', $phone);
 }
 
+/**
+ * Müraciətin WhatsApp linki: mesaj ziyarətçinin adından hazır yazılır və saytın WhatsApp nömrəsinə gedir.
+ * Forma bu linki {name}, {surname}, {phone}, {type} yer tutucuları ilə alır, JS onları doldurur.
+ */
+function whatsapp_application_url(array $a): string
+{
+    $text = 'Salam! ' . config('site_name') . " saytından müraciət edirəm.\n"
+        . 'Ad: ' . $a['name'] . ' ' . $a['surname'] . "\n"
+        . 'Telefon: ' . $a['phone'] . "\n"
+        . 'Növ: ' . $a['type'];
+    return 'https://wa.me/' . preg_replace('/\D/', '', (string) config('whatsapp')) . '?text=' . rawurlencode($text);
+}
+
 function e(?string $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');

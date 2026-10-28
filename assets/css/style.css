@@ -348,6 +348,8 @@ main { overflow-x: hidden; overflow-x: clip; }
 .form-message { min-height: 1.5em; margin-top: 14px; font-size: 14px; }
 .form-message.is-success { color: var(--mint); }
 .form-message.is-error { color: #ff7a7a; }
+.form-message a { color: inherit; font-weight: 600; text-decoration: underline; }
+.apply-form .btn .icon { font-size: 17px; }
 
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 

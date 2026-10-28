@@ -1,5 +1,6 @@
 <?php
 // Müraciət formunun qəbulu: yoxlama → admin panel (storage/data/applications.json) → e-poçt bildirişi.
+// Saytda JS WhatsApp-ı özü açır və bura arxa fonda yazır; JS olmadan buradan WhatsApp-a yönləndiririk.
 
 require __DIR__ . '/includes/bootstrap.php';
 
@@ -124,4 +125,7 @@ if (!$saved && !$mailed) {
 }
 
 $_SESSION['last_submit'] = time();
+if (!$isAjax) {
+    redirect(whatsapp_application_url($application), 303);
+}
 respond(true, content('form.success'));

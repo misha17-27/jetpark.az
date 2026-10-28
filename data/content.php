@@ -83,7 +83,7 @@ return [
     'form' => [
         'label'   => 'Müraciət formu',
         'button'  => 'Göndər',
-        'success' => 'Təşəkkür edirik! Müraciətiniz qəbul edildi. Tezliklə sizinlə əlaqə saxlayacağıq.',
+        'success' => 'Təşəkkür edirik! WhatsApp-da açılan mesajı göndərin — tezliklə sizinlə əlaqə saxlayacağıq.',
     ],
     'footer' => [
         'copyright' => '© Jetpark.az.',

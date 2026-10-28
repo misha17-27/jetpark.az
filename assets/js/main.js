@@ -49,10 +49,11 @@
         revealItems.forEach(function (el) { el.classList.add('is-visible'); });
     }
 
-    // ---------- Müraciət formu (səhifə yenilənmədən göndərilir) ----------
+    // ---------- Müraciət formu: WhatsApp-a göndərilir ----------
+    // WhatsApp hazır mesajla açılır (mətn şablonu formanın data-whatsapp atributundadır), müraciət isə
+    // arxa fonda admin panelə yazılır — ziyarətçi WhatsApp-da "Göndər"i basmasa da itmir.
     document.querySelectorAll('.apply-form').forEach(function (form) {
         var message = form.querySelector('.form-message');
-        var button = form.querySelector('button[type="submit"]');
 
         function show(text, status) {
             message.textContent = text;
@@ -82,6 +83,12 @@
             }
         });
 
+        function whatsappUrl(data) {
+            return form.getAttribute('data-whatsapp').replace(/%7B(name|surname|phone|type)%7D/g, function (_, field) {
+                return encodeURIComponent(String(data.get(field) || '').trim());
+            });
+        }
+
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (!validate()) {
@@ -91,34 +98,40 @@
                 return;
             }
 
-            button.disabled = true;
-            show('Göndərilir…', 'pending');
+            var data = new FormData(form);
+            var url = whatsappUrl(data);
 
+            // Pəncərə klikin içində açılmalıdır, yoxsa brauzer onu bloklayır.
+            var win = window.open(url, '_blank');
+            if (win) {
+                try { win.opener = null; } catch (err) { /* başqa domen */ }
+            }
+
+            // keepalive: ziyarətçi səhifədən çıxsa da sorğu sona çatır.
             fetch(form.action, {
                 method: 'POST',
-                body: new FormData(form),
+                body: data,
                 headers: { 'X-Requested-With': 'fetch', 'Accept': 'application/json' },
-                credentials: 'same-origin'
-            })
-                .then(function (res) {
-                    return res.json().catch(function () {
-                        throw new Error('bad-json');
-                    });
-                })
-                .then(function (data) {
-                    show(data.message, data.ok ? 'success' : 'error');
-                    if (data.ok) {
-                        form.querySelectorAll('input[type="text"], input[type="tel"]').forEach(function (input) {
-                            if (input.name !== 'website') input.value = '';
-                        });
-                    }
-                })
-                .catch(function () {
-                    show('Xəta baş verdi. Zəhmət olmasa, bir az sonra yenidən cəhd edin.', 'error');
-                })
-                .then(function () {
-                    button.disabled = false;
-                });
+                credentials: 'same-origin',
+                keepalive: true
+            }).catch(function () { /* müraciət WhatsApp-a onsuz da gedir */ });
+
+            show(form.getAttribute('data-success'), 'success');
+            var link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            link.textContent = 'WhatsApp açılmadısa, buraya klikləyin.';
+            message.appendChild(document.createTextNode(' '));
+            message.appendChild(link);
+
+            form.querySelectorAll('input[type="text"], input[type="tel"]').forEach(function (input) {
+                if (input.name !== 'website') input.value = '';
+            });
+
+            if (!win) {
+                window.location.href = url;
+            }
         });
     });
 })();

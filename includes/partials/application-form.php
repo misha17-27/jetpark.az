@@ -2,15 +2,18 @@
 /**
  * Müraciət formu.
  * $type: null — istifadəçi "Növ" seçir; 'Sahibkar' və ya 'Sürücü' — sabit dəyər (seçim göstərilmir).
- * $source: müraciətin hansı səhifədən gəldiyi (e-poçtda göstərilir).
+ * $source: müraciətin hansı səhifədən gəldiyi (admin paneldə və e-poçtda göstərilir).
+ * Göndərəndə WhatsApp hazır mesajla açılır, müraciət həm də admin panelə yazılır (assets/js/main.js).
  */
 $type ??= null;
 $source ??= 'Ana səhifə';
 $formId = 'form-' . substr(md5($source), 0, 6);
 $notice = flash($formId);
 $old = $notice['old'] ?? [];
+$whatsappTemplate = whatsapp_application_url(['name' => '{name}', 'surname' => '{surname}', 'phone' => '{phone}', 'type' => '{type}']);
 ?>
-<form class="apply-form" id="<?= e($formId) ?>" action="<?= url('send.php') ?>" method="post" novalidate>
+<form class="apply-form" id="<?= e($formId) ?>" action="<?= url('send.php') ?>" method="post" novalidate
+      data-whatsapp="<?= e($whatsappTemplate) ?>" data-success="<?= e(content('form.success')) ?>">
     <?php partial('section-label', ['text' => content('form.label'), 'tag' => 'h2']) ?>
 
     <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
@@ -50,6 +53,6 @@ $old = $notice['old'] ?? [];
         <?php endif; ?>
     </div>
 
-    <button class="btn btn--green" type="submit"><?= e(content('form.button')) ?></button>
+    <button class="btn btn--green" type="submit"><?= icon('whatsapp') ?><?= e(content('form.button')) ?></button>
     <p class="form-message<?= $notice ? ' is-' . e($notice['status']) : '' ?>" role="status" aria-live="polite"><?= $notice ? e($notice['message']) : '' ?></p>
 </form>

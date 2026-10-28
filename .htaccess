@@ -10,6 +10,9 @@ AddDefaultCharset UTF-8
     RewriteRule ^config\.php$ - [F,L]
     RewriteRule ^\.(?!well-known/) - [F,L]
 
+    # Köhnə WordPress-in serverdə qalmış PHP faylları (wp-login.php, xmlrpc.php, wp-includes/...) icra olunmur.
+    RewriteRule ^(xmlrpc\.php|wp-[a-z-]+\.php|wp-(admin|includes|content)/.+\.php)$ - [G,L]
+
     # www → www-suz (əvvəl bunu WordPress edirdi).
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
