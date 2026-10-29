@@ -6,10 +6,11 @@ $list = array_slice($all, ($page - 1) * $perPage, $perPage);
 
 extract(seo_vars('blog'));
 if ($page > 1) {
-    // "Bloq — ... | JetPark" → "Bloq — ... — Səhifə 2 | JetPark" (ayırıcı " | " və ya " - " ola bilər)
-    $title = preg_replace('/( [|-] [^|-]+)$/u', ' — Səhifə ' . $page . '$1', $title, 1, $replaced);
-    if (!$replaced) {
-        $title .= ' — Səhifə ' . $page;
+    // Növbəti səhifələrin öz başlığı və təsviri olur ki, birinci səhifəni təkrarlamasın.
+    $title = content('blog.hero_title') . ' — Səhifə ' . $page . ' | ' . config('site_name');
+    $description = 'Səhifə ' . $page . '. ' . $description;
+    if (mb_strlen($description) > 160) {
+        $description = mb_substr($description, 0, (int) mb_strrpos(mb_substr($description, 0, 159), ' ')) . '…';
     }
 }
 $active = 'blog';

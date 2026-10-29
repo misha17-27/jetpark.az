@@ -5,6 +5,7 @@ $og_image = $post['image'];
 $og_type = 'article';
 $active = 'blog';
 $canonical = $post['slug'] . '/';
+$crumb = $post['title'];
 
 $all = posts();
 $newer = $all[$post['index'] - 1] ?? null;
@@ -50,5 +51,6 @@ $shareText = rawurlencode($post['title']);
     'datePublished' => date('c', strtotime($post['date'])),
     'description'   => $post['description'],
     'mainEntityOfPage' => absolute_url($canonical),
-    'publisher'     => ['@type' => 'Organization', 'name' => config('site_name'), 'logo' => ['@type' => 'ImageObject', 'url' => absolute_url('assets/img/logo.svg')]],
+    'author'        => ['@type' => 'Organization', 'name' => config('site_name'), 'url' => absolute_url()],
+    'publisher'     => ['@type' => 'Organization', 'name' => config('site_name'), 'logo' => ['@type' => 'ImageObject', 'url' => absolute_url('assets/img/logo-dark.svg')]],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script>

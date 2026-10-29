@@ -9,6 +9,27 @@ $description = $description ?? '';
 $canonical   = absolute_url($canonical ?? '');
 $ogImage     = absolute_url('assets/' . ($og_image ?? 'img/home-car.webp'));
 $active      = $active ?? '';
+
+// Strukturlaşdırılmış məlumat: ana səhifədə sayt və şirkət, «Əlaqə»də şirkət, daxili səhifələrdə breadcrumb
+// (yazılarda $crumb — yazının başlığı).
+$jsonld = [];
+if (empty($noindex)) {
+    if ($canonical === absolute_url()) {
+        $jsonld[] = ['@type' => 'WebSite', '@id' => absolute_url('#website'), 'name' => $siteName, 'url' => absolute_url(), 'inLanguage' => 'az'];
+        $jsonld[] = business_jsonld();
+    }
+    if ($active === 'elaqe') {
+        $jsonld[] = business_jsonld();
+    }
+    $navLabels = nav_items();
+    if (isset($navLabels[$active])) {
+        $crumbs = [['Ana səhifə', absolute_url()], [$navLabels[$active], absolute_url($active . '/')]];
+        if (!empty($crumb)) {
+            $crumbs[] = [$crumb, $canonical];
+        }
+        $jsonld[] = breadcrumb_jsonld($crumbs);
+    }
+}
 ?><!DOCTYPE html>
 <html lang="az">
 <head>
@@ -22,6 +43,7 @@ $active      = $active ?? '';
     <?php if (!empty($noindex)): ?>
     <meta name="robots" content="noindex">
     <?php else: ?>
+    <meta name="robots" content="max-image-preview:large">
     <link rel="canonical" href="<?= e($canonical) ?>">
     <?php endif; ?>
     <meta property="og:locale" content="az_AZ">
@@ -41,6 +63,9 @@ $active      = $active ?? '';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700&display=swap">
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <?php foreach ($jsonld as $data): ?>
+    <?= jsonld($data) ?>
+    <?php endforeach; ?>
 </head>
 <body class="page-<?= e($active ?: 'home') ?>">
 <a class="skip-link" href="#content">Məzmuna keç</a>

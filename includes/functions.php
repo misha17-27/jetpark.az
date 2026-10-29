@@ -98,6 +98,48 @@ function all_posts(): array
     return $posts;
 }
 
+/** Strukturlaşdırılmış məlumat (schema.org JSON-LD) üçün <script> bloku. */
+function jsonld(array $data): string
+{
+    $data = ['@context' => 'https://schema.org'] + $data;
+    return '<script type="application/ld+json">' . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . '</script>';
+}
+
+/** Şirkət haqqında Google üçün məlumat: ad, ünvan, telefon, xəritə, sosial şəbəkələr («Parametrlər»dən). */
+function business_jsonld(): array
+{
+    $data = [
+        '@type'       => 'LocalBusiness',
+        '@id'         => absolute_url('#business'),
+        'name'        => config('site_name'),
+        'description' => seo('home')['description'] ?? '',
+        'url'         => absolute_url(),
+        'logo'        => absolute_url('assets/img/logo-dark.svg'),
+        'image'       => absolute_url('assets/img/home-car.webp'),
+        'telephone'   => config('phone'),
+        'email'       => config('email'),
+        'address'     => ['@type' => 'PostalAddress', 'streetAddress' => config('address_short'), 'addressLocality' => 'Bakı', 'addressCountry' => 'AZ'],
+        'sameAs'      => array_values(array_filter([config('facebook'), config('instagram')])),
+    ];
+    if (preg_match('/[?&]q=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/', (string) config('map_embed'), $m)) {
+        $data['geo'] = ['@type' => 'GeoCoordinates', 'latitude' => (float) $m[1], 'longitude' => (float) $m[2]];
+    }
+    if (config('map_url')) {
+        $data['hasMap'] = config('map_url');
+    }
+    return $data;
+}
+
+/** Breadcrumb: [['Ana səhifə', url], ['Blog', url], ...] — Google axtarışında ünvanın yerində göstərilir. */
+function breadcrumb_jsonld(array $items): array
+{
+    $list = [];
+    foreach (array_values($items) as $i => [$name, $url]) {
+        $list[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $name, 'item' => $url];
+    }
+    return ['@type' => 'BreadcrumbList', 'itemListElement' => $list];
+}
+
 /** Yazının brauzer başlığı (<title>): SEO başlıq, boşdursa «Yazının başlığı - JetPark». */
 function post_seo_title(array $post): string
 {
