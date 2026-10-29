@@ -333,8 +333,9 @@ main { overflow-x: hidden; overflow-x: clip; }
 .apply-form input.is-invalid { border-color: #ff6b6b; }
 
 .field--select { position: relative; }
-.apply-form select { appearance: none; padding-right: 36px; cursor: pointer; }
-.apply-form select option { color: #000; }
+.apply-form select { appearance: none; padding-right: 36px; cursor: pointer; color-scheme: dark; }
+/* Windows-da açılan siyahı selectin tünd fonunu götürür — mətn açıq olmalıdır. */
+.apply-form select option { color: #fff; background: #0B0B0B; }
 .select-arrow {
     position: absolute; top: 50%; right: 14px;
     font-size: 12px; color: #fff;
