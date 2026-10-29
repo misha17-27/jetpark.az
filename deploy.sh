@@ -15,7 +15,7 @@ fi
 SRC="$(cd "$(dirname "$0")" && pwd)"
 
 # Sayta köçürülməyənlər.
-SKIP=" .git .gitignore .gitattributes .cpanel.yml deploy.sh README.md .claude "
+SKIP=" .git .gitignore .gitattributes .cpanel.yml deploy.sh autodeploy.sh README.md .claude "
 
 mkdir -p "$DEST"
 

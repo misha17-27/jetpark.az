@@ -114,13 +114,30 @@ Apache или LiteSpeed с `mod_rewrite`.
 5. Сразу откройте `https://jetpark.az/admin/` и создайте администратора.
 6. В «Parametrlər» проверьте e-mail для заявок, отправьте тестовую заявку с сайта.
 
-**Обновление сайта:**
+**Обновление сайта вручную:**
 
 1. Отправьте изменения (push) в GitHub.
 2. Git™ Version Control → Manage → Pull or Deploy.
 3. Нажмите «Update from Remote», затем «Deploy HEAD Commit».
 
-Если сайт открывается не из `public_html` (например, это дополнительный домен), поменяйте путь в `.cpanel.yml`.
+**Автоматическое обновление.** `autodeploy.sh` раз в 5 минут проверяет GitHub. Если в `main` появился новый коммит,
+скрипт забирает его и выкладывает на сайт тем же `deploy.sh`. Когда новых коммитов нет, он ничего не делает
+и ничего не пишет, поэтому cron не шлёт писем. Неудачный деплой повторяется при следующем запуске.
+Журнал — файл `jetpark-deploy.log` в домашней папке (File Manager → Home).
+
+Настройка (один раз):
+
+1. Обновите сайт вручную, как описано выше, чтобы `autodeploy.sh` попал на сервер.
+2. cPanel → Cron Jobs → Add New Cron Job:
+   - Common Settings — «Once Per Five Minutes (*/5 * * * *)»;
+   - Command — `/bin/bash /home/jetpark/repositories/jetpark.az/autodeploy.sh`;
+   - нажмите «Add New Cron Job».
+
+Всё, что попадает в `main` на GitHub, через несколько минут оказывается на сайте. Поэтому включите в GitHub
+двухфакторную защиту (Settings → Password and authentication).
+
+Если сайт открывается не из `public_html` (например, это дополнительный домен), поменяйте путь в `.cpanel.yml`
+(его используют и ручной, и автоматический деплой).
 
 **Cloudflare.** Сайт работает через Cloudflare:
 
