@@ -225,6 +225,23 @@ function status_badge(string $status): string
     return '<span class="badge badge--' . e($status) . '">' . e(t('status.' . $status)) . '</span>';
 }
 
+/** SEO vəziyyəti: ok; long — Google başlığı (60) və ya təsviri (160 simvol) kəsəcək; empty. */
+function seo_state(array $s): string
+{
+    $title = trim($s['title'] ?? '');
+    $description = trim($s['description'] ?? '');
+    if ($title === '' || $description === '') {
+        return 'empty';
+    }
+    return mb_strlen($title) > 60 || mb_strlen($description) > 160 ? 'long' : 'ok';
+}
+
+/** Rəngli nöqtə (yaşıl / sarı / boz), mənası ipucunda. */
+function status_dot(string $state, string $label): string
+{
+    return '<span class="dot dot--' . e($state) . '" role="img" aria-label="' . e($label) . '" title="' . e($label) . '"></span>';
+}
+
 /** Səhifə mətnlərini yadda saxlayır: content_save('about', ['lead' => ...]) */
 function content_save(string $section, array $values): void
 {

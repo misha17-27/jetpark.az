@@ -121,6 +121,14 @@
         }
         t.addEventListener('input', update);
         d.addEventListener('input', update);
+        // Yazılarda boş SEO başlıq «Yazının başlığı - JetPark» olur: yer tutucu başlıqla birgə yenilənir.
+        var source = t.hasAttribute('data-seo-suffix') && card.closest('form').querySelector('[data-slug-source]');
+        if (source) {
+            source.addEventListener('input', function () {
+                t.placeholder = source.value ? source.value + t.getAttribute('data-seo-suffix') : '';
+                update();
+            });
+        }
         update();
     });
 

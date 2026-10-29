@@ -1,5 +1,5 @@
 <?php
-$title = $post['title'] . ' - ' . config('site_name');
+$title = post_seo_title($post);
 $description = $post['description'];
 $og_image = $post['image'];
 $og_type = 'article';

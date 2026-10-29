@@ -98,6 +98,13 @@ function all_posts(): array
     return $posts;
 }
 
+/** Yazının brauzer başlığı (<title>): SEO başlıq, boşdursa «Yazının başlığı - JetPark». */
+function post_seo_title(array $post): string
+{
+    $title = trim($post['seo_title'] ?? '');
+    return $title !== '' ? $title : $post['title'] . ' - ' . config('site_name');
+}
+
 /** Saytda göstərilən yazılar: dərc olunmuş və tarixi çatmış. */
 function posts(): array
 {

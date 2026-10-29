@@ -30,3 +30,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require ROOT . '/includes/store.php';
 require ROOT . '/includes/functions.php';
 require ROOT . '/includes/icons.php';
+require ROOT . '/includes/migrations.php';
+
+run_migrations();

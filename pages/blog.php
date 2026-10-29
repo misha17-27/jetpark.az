@@ -6,8 +6,8 @@ $list = array_slice($all, ($page - 1) * $perPage, $perPage);
 
 extract(seo_vars('blog'));
 if ($page > 1) {
-    // "Blog - JetPark" → "Blog — Səhifə 2 - JetPark"
-    $title = preg_replace('/( - [^-]+)$/u', ' — Səhifə ' . $page . '$1', $title, 1, $replaced);
+    // "Bloq — ... | JetPark" → "Bloq — ... — Səhifə 2 | JetPark" (ayırıcı " | " və ya " - " ola bilər)
+    $title = preg_replace('/( [|-] [^|-]+)$/u', ' — Səhifə ' . $page . '$1', $title, 1, $replaced);
     if (!$replaced) {
         $title .= ' — Səhifə ' . $page;
     }

@@ -49,13 +49,14 @@ if ($action === 'edit') {
         admin_redirect('posts');
     }
     $isNew = !$post;
-    $post ??= ['id' => '', 'status' => 'published', 'slug' => '', 'title' => '', 'date' => date('Y-m-d H:i:s'), 'image' => '', 'thumb' => '', 'description' => '', 'content' => ''];
+    $post ??= ['id' => '', 'status' => 'published', 'slug' => '', 'title' => '', 'seo_title' => '', 'date' => date('Y-m-d H:i:s'), 'image' => '', 'thumb' => '', 'description' => '', 'content' => ''];
     $errors = [];
 
     if (is_post()) {
         verify_csrf();
         $in = [
             'title'       => post_str('title', 200),
+            'seo_title'   => post_str('seo_title', 120),
             'slug'        => slugify(post_str('slug', 120)),
             'status'      => ($_POST['status'] ?? '') === 'draft' ? 'draft' : 'published',
             'date'        => post_str('date', 20),
@@ -137,23 +138,44 @@ if ($action === 'edit') {
         <form method="post" enctype="multipart/form-data" action="<?= e(admin_url('posts', ['a' => 'edit', 'id' => $post['id']])) ?>">
             <?= csrf_field() ?>
             <div class="form-layout">
-                <div class="card">
-                    <div class="field<?= isset($errors['title']) ? ' has-error' : '' ?>">
-                        <label for="f-title"><?= e(t('posts.title')) ?></label>
-                        <input id="f-title" type="text" name="title" value="<?= e($post['title']) ?>" maxlength="200" required data-slug-source>
-                        <?php if (isset($errors['title'])): ?><p class="field-error"><?= e($errors['title']) ?></p><?php endif; ?>
+                <div>
+                    <div class="card">
+                        <div class="field<?= isset($errors['title']) ? ' has-error' : '' ?>">
+                            <label for="f-title"><?= e(t('posts.title')) ?></label>
+                            <input id="f-title" type="text" name="title" value="<?= e($post['title']) ?>" maxlength="200" required data-slug-source>
+                            <?php if (isset($errors['title'])): ?><p class="field-error"><?= e($errors['title']) ?></p><?php endif; ?>
+                        </div>
+                        <div class="field<?= isset($errors['slug']) ? ' has-error' : '' ?>">
+                            <label for="f-slug"><?= e(t('posts.slug')) ?></label>
+                            <input id="f-slug" type="text" name="slug" value="<?= e($post['slug']) ?>" maxlength="120" data-slug-target>
+                            <?php if (isset($errors['slug'])): ?><p class="field-error"><?= e($errors['slug']) ?></p><?php endif; ?>
+                            <p class="field-hint"><?= e(absolute_url('')) ?><b><?= e($post['slug'] ?: '…') ?></b>/ — <?= e(t('posts.slug_hint')) ?></p>
+                        </div>
+                        <div class="field">
+                            <label for="f-content"><?= e(t('posts.content')) ?></label>
+                            <textarea id="f-content" name="content" data-editor><?= e($post['content']) ?></textarea>
+                        </div>
                     </div>
-                    <div class="field<?= isset($errors['slug']) ? ' has-error' : '' ?>">
-                        <label for="f-slug"><?= e(t('posts.slug')) ?></label>
-                        <input id="f-slug" type="text" name="slug" value="<?= e($post['slug']) ?>" maxlength="120" data-slug-target>
-                        <?php if (isset($errors['slug'])): ?><p class="field-error"><?= e($errors['slug']) ?></p><?php endif; ?>
-                        <p class="field-hint"><?= e(absolute_url('')) ?><b><?= e($post['slug'] ?: '…') ?></b>/ — <?= e(t('posts.slug_hint')) ?></p>
+                    <?php $suffix = ' - ' . config('site_name'); ?>
+                    <div class="card seo-card">
+                        <div class="card__head"><h2 class="card__title">SEO</h2></div>
+                        <p class="card__sub"><?= e(t('posts.seo_hint')) ?></p>
+                        <div class="field">
+                            <label for="f-seo-title"><?= e(t('seo.title')) ?></label>
+                            <input id="f-seo-title" type="text" name="seo_title" value="<?= e($post['seo_title'] ?? '') ?>" maxlength="120" placeholder="<?= e($post['title'] !== '' ? $post['title'] . $suffix : '') ?>" data-counter="60" data-seo="title" data-seo-suffix="<?= e($suffix) ?>">
+                            <p class="field-hint"><?= e(t('posts.seo_title_hint', config('site_name'))) ?></p>
+                        </div>
+                        <div class="field">
+                            <label for="f-description"><?= e(t('seo.description')) ?></label>
+                            <textarea id="f-description" name="description" rows="3" maxlength="300" data-counter="160" data-seo="description"><?= e($post['description']) ?></textarea>
+                            <p class="field-hint"><?= e(t('posts.description_hint')) ?></p>
+                        </div>
+                        <div class="seo-preview" data-seo-preview>
+                            <div class="seo-preview__title"></div>
+                            <div class="seo-preview__url"><?= e(absolute_url(($post['slug'] ?: '…') . '/')) ?></div>
+                            <div class="seo-preview__desc"></div>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label for="f-content"><?= e(t('posts.content')) ?></label>
-                        <textarea id="f-content" name="content" data-editor><?= e($post['content']) ?></textarea>
-                    </div>
-                    <?= field_textarea('description', t('posts.description'), $post['description'], ['rows' => 3, 'maxlength' => 300, 'counter' => 160, 'hint' => t('posts.description_hint')]) ?>
                 </div>
                 <aside>
                     <div class="card">
@@ -200,7 +222,7 @@ admin_page(t('nav.posts'), 'posts', function () use ($list, $q, $page, $pages) {
         <?php else: ?>
             <div class="table-wrap">
                 <table class="table">
-                    <thead><tr><th></th><th><?= e(t('posts.title')) ?></th><th><?= e(t('posts.status')) ?></th><th><?= e(t('posts.date')) ?></th><th class="col-actions"></th></tr></thead>
+                    <thead><tr><th></th><th><?= e(t('posts.title')) ?></th><th><?= e(t('posts.status')) ?></th><th class="col-dot">SEO</th><th><?= e(t('posts.date')) ?></th><th class="col-actions"></th></tr></thead>
                     <tbody>
                     <?php foreach ($list as $p): $state = post_state($p); ?>
                         <tr>
@@ -210,6 +232,8 @@ admin_page(t('nav.posts'), 'posts', function () use ($list, $q, $page, $pages) {
                                 <span class="row-sub">/<?= e($p['slug']) ?>/</span>
                             </td>
                             <td><span class="badge badge--<?= $state ?>"><?= e(t('posts.' . $state)) ?></span></td>
+                            <?php $seoState = seo_state(['title' => post_seo_title($p), 'description' => $p['description']]); ?>
+                            <td class="col-dot"><?= status_dot($seoState, t('seo.state_' . $seoState)) ?></td>
                             <td class="nowrap"><?= e(format_dt($p['date'])) ?></td>
                             <td class="col-actions">
                                 <?php if ($state === 'published'): ?>

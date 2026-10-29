@@ -192,6 +192,8 @@ function admin_dictionary(): array
         'posts.content'      => ['Mətn', 'Текст статьи'],
         'posts.description'  => ['Qısa təsvir (SEO)', 'Краткое описание (SEO)'],
         'posts.description_hint' => ['Axtarış nəticələrində görünür. Boş qalarsa mətndən götürülür.', 'Показывается в поиске. Если пусто — берётся из текста.'],
+        'posts.seo_hint'     => ['Google axtarışında görünən başlıq və təsvir.', 'Заголовок и описание, которые видны в поиске Google.'],
+        'posts.seo_title_hint' => ['Boş qalarsa: «Yazının başlığı - %s».', 'Если пусто — «Заголовок статьи - %s».'],
         'posts.date'         => ['Dərc tarixi', 'Дата публикации'],
         'posts.status'       => ['Status', 'Статус'],
         'posts.published'    => ['Dərc olunub', 'Опубликована'],

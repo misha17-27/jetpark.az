@@ -14,22 +14,6 @@ $seoPages = [
     'blog'        => ['slug' => 'blog/', 'hero' => 'blog', 'edit' => 'posts', 'text' => fn () => posts()],
 ];
 
-/** SEO vəziyyəti: ok; long — Google başlığı (60) və ya təsviri (160 simvol) kəsəcək; empty. */
-function seo_state(array $s): string
-{
-    $title = trim($s['title'] ?? '');
-    $description = trim($s['description'] ?? '');
-    if ($title === '' || $description === '') {
-        return 'empty';
-    }
-    return mb_strlen($title) > 60 || mb_strlen($description) > 160 ? 'long' : 'ok';
-}
-
-function status_dot(string $state, string $label): string
-{
-    return '<span class="dot dot--' . e($state) . '" role="img" aria-label="' . e($label) . '" title="' . e($label) . '"></span>';
-}
-
 // ---------- Səhifənin redaktəsi ----------
 if ($action === 'edit') {
     $key = (string) ($_GET['page'] ?? '');
@@ -47,6 +31,13 @@ if ($action === 'edit') {
             'description' => post_str('seo_description', 300),
             'og_image'    => (string) handle_image_field('seo_og_image', seo($key)['og_image'] ?? '', $errors, 'og', 1200),
         ];
+        // Dəyişdirilməyən sahə ilkin mətnə bağlı qalır — sonradan yenilənən ilkin SEO da tətbiq olunur.
+        $defaults = store_defaults('seo')[$key] ?? [];
+        foreach ($entry as $field => $value) {
+            if ($value === ($defaults[$field] ?? null)) {
+                $entry[$field] = '';
+            }
+        }
         store_update('seo', function (array $all) use ($key, $entry) {
             $all[$key] = $entry;
             return $all;
